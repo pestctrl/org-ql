@@ -850,8 +850,23 @@ return an empty string."
            (title (--> (org-ql-view--add-faces element)
                        (org-element-property :raw-value it)
                        (org-link-display-format it)))
-           (todo-keyword (-some--> (org-element-property :todo-keyword element)
-                           (org-ql-view--add-todo-face it)))
+           (indent (make-string (let ((m (org-element-property :org-marker element)))
+                                  (with-current-buffer (marker-buffer m)
+                                    (goto-char m)
+                                    (get-parent-indent-level)))
+                                ?.))
+           (category (with-current-buffer (marker-buffer (org-element-property :org-marker element))
+                       (->> (buffer-file-name)
+                            (file-name-nondirectory)
+                            (file-name-sans-extension)
+                            (format "%s:")
+                            (format "%-12s"))))
+           (todo-keyword (concat category
+                                 (when org-ql-indent-levels
+                                   indent)
+                                 (-some--> (org-element-property :todo-keyword element)
+                                   (org-ql-view--add-todo-face it))))
+           ;; FIXME: Figure out whether I should use `org-agenda-use-tag-inheritance' or `org-use-tag-inheritance', etc.
            (tag-list (if org-use-tag-inheritance
                          ;; MAYBE: Use our own variable instead of `org-use-tag-inheritance'.
                          (if-let ((marker (or (org-element-property :org-hd-marker element)
