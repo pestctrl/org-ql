@@ -894,6 +894,7 @@ return an empty string."
            ;; FIXME: Use proper prefix
            (concat "  " it)
            (org-add-props it properties
+             'txt string
              'org-agenda-type 'search
              'todo-state todo-keyword
              'tags tag-list
