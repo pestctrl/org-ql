@@ -919,6 +919,12 @@ return an empty string."
            (title-faces (get-text-property 0 'face title))
            (title (org-ql-view--font-lock-as-org title))
            (_ (add-face-text-property 0 (length title) title-faces t title))
+           (indent (when org-ql-indent-levels
+                     (make-string (let ((m (org-element-property :org-marker element)))
+                                    (with-current-buffer (marker-buffer m)
+                                      (goto-char m)
+                                      (get-parent-indent-level)))
+                                  ?.)))
            (todo-keyword (-some--> (org-element-property :todo-keyword element)
                            (org-ql-view--add-todo-face
                             (substring-no-properties it))))
@@ -966,7 +972,7 @@ return an empty string."
            (due-string (pcase (org-element-property :relative-due-date element)
                          ('nil "")
                          (string (format " %s " (org-add-props string nil 'face 'org-ql-view-due-date)))))
-           (string (s-join " " (-non-nil (list (format "%-12s" category) todo-keyword priority-string title due-string tag-string)))))
+           (string (s-join " " (-non-nil (list (format "%-12s" category) (concat indent todo-keyword) priority-string title due-string tag-string)))))
       (remove-list-of-text-properties 0 (length string) '(line-prefix) string)
       ;; Add all the necessary properties and faces to the whole string
       (--> string
