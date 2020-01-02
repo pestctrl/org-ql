@@ -870,8 +870,12 @@ return an empty string."
                            (warn "No marker found for item: %s" title)
                            (org-element-property :tags element))
                        (org-element-property :tags element)))
-           (tag-string (when tag-list
-                         (--> tag-list
+           (tags-to-show (cl-remove-if (lambda (x)
+                                         (and (not (null org-agenda-hide-tags-regexp))
+                                              (string-match-p org-agenda-hide-tags-regexp x)))
+                                    tag-list))
+           (tag-string (when tags-to-show
+                         (--> tags-to-show
                            (s-join ":" it)
                            (s-wrap it ":")
                            (org-add-props it nil 'face 'org-tag))))
