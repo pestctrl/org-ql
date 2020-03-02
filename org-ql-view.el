@@ -884,7 +884,8 @@ return an empty string."
                            (org-element-property :tags element))
                        (org-element-property :tags element)))
            (tags-to-show (remove-if (lambda (x)
-                                      (string-match-p org-agenda-hide-tags-regexp x))
+                                      (or (null org-agenda-hide-tags-regexp)
+                                          (string-match-p org-agenda-hide-tags-regexp x)))
                                     tag-list))
            (tag-string (when tags-to-show
                          (--> tags-to-show
