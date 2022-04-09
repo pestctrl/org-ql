@@ -852,6 +852,12 @@ return an empty string."
            (title (--> (org-ql-view--add-faces element)
                     (org-element-property :raw-value it)
                     (org-link-display-format it)))
+           (category (with-current-buffer (marker-buffer (org-element-property :org-marker element))
+                       (--> (buffer-file-name)
+                         (file-name-nondirectory it)
+                         (file-name-sans-extension it)
+                         (concat it ":")
+                         (format "%-12s" it))))
            (todo-keyword (-some--> (org-element-property :todo-keyword element)
                            (org-ql-view--add-todo-face it)))
            (tag-list (if org-use-tag-inheritance
@@ -890,7 +896,7 @@ return an empty string."
            (due-string (pcase (org-element-property :relative-due-date element)
                          ('nil "")
                          (string (format " %s " (org-add-props string nil 'face 'org-ql-view-due-date)))))
-           (string (s-join " " (-non-nil (list todo-keyword priority-string title due-string tag-string)))))
+           (string (s-join " " (-non-nil (list category todo-keyword priority-string title due-string tag-string)))))
       (remove-list-of-text-properties 0 (length string) '(line-prefix) string)
       ;; Add all the necessary properties and faces to the whole string
       (--> string
