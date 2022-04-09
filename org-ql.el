@@ -551,10 +551,12 @@ PREAMBLE-CASE-FOLD."
                                  do (outline-back-to-heading 'invisible-ok)
                                  when (funcall predicate)
                                  collect (funcall action)
-                                 do (outline-next-heading)))
+                                 do (outline-next-heading)
+                                 do (thread-yield)))
               (t (cl-loop when (funcall predicate)
                           collect (funcall action)
-                          while (outline-next-heading))))))))
+                          while (outline-next-heading)
+                          do (thread-yield))))))))
 
 ;;;;; Helpers
 
