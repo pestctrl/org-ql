@@ -962,7 +962,7 @@ return an empty string."
            (due-string (pcase (org-element-property :relative-due-date element)
                          ('nil "")
                          (string (format " %s " (org-add-props string nil 'face 'org-ql-view-due-date)))))
-           (string (s-join " " (-non-nil (list todo-keyword priority-string title due-string tag-string)))))
+           (string (s-join " " (-non-nil (list (format "%-12s" category) todo-keyword priority-string title due-string tag-string)))))
       (remove-list-of-text-properties 0 (length string) '(line-prefix) string)
       ;; Add all the necessary properties and faces to the whole string
       (--> string
